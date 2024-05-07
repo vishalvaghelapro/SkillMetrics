@@ -168,7 +168,7 @@ namespace SkillInventory.Controllers
             string ExpertsStockcommaSeparatedValues = string.Join(", ", Experts);
             string[] stringInts = CategorycommaSeparatedValues.Split(',');
             string employeeSkillCount = string.Join(", ", GetEmployeeSkillCount());
-
+            ViewBag.username = loginName;
             return new ChartsViewModel { Employee = EmployeesStockcommaSeparatedValues,
                 Beginner = BeginnersStockcommaSeparatedValues,
                 Intermediate = IntermediatesStockcommaSeparatedValues,
