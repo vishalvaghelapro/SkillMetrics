@@ -1,0 +1,67 @@
+html {
+  font-size: 14px;
+}
+
+@media (min-width: 768px) {
+  html {
+    font-size: 16px;
+  }
+}
+
+html {
+  position: relative;
+  min-height: 100%;
+}
+
+body {
+  margin-bottom: 60px;
+}
+ table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+        }
+        #textbox {
+            width: 100%;
+            padding: 8px;
+        }
+        #add-button {
+            padding: 8px 16px;
+            background-color: #ddd;
+            border: none;
+            cursor: pointer;
+        }
+
+
+#myEmail::placeholder {
+    color: #999;
+    opacity: 1;
+}
+
+#myEmail {
+    border: 1px solid #ccc;
+    padding: 5px;
+    font-size: 16px;
+}
+@media (max-width: 480px) {
+    #div {
+        top: 50%; /* IMPORTANT */
+        left: 50%; /* IMPORTANT */
+        display: block;
+        position: absolute;
+        background: url(images/background.png) no-repeat center center;
+        width: 750px;
+        height: 417px;
+        margin-top: -208.5px; /* HALF OF THE HEIGHT */
+        margin-left: -375px; /* HALF OF THE WIDTH */
+    }
+}
+.sectioncard {
+    margin-left: 200px;
+    margin-right: 0px;
+    margin-bottom: 0px;
+    margin-top: 0px;
+}

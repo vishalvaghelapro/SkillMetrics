@@ -1,0 +1,85 @@
+﻿@{
+    ViewData["Title"] = "ViewSkill";
+    string domain = "@desototechnologies.com";
+}
+<section>
+
+
+   <div class="card">
+        <div class="card-body">
+            <h3 class="card-title">Employee Data</h3> 
+                <table id="empDataTable" class="table table-bordered">
+                                <thead>
+                                    <tr class="table-dark">
+                                        <th>Name</th>
+                                        <th>Email</th>
+                                        <th>Department</th>
+                                        <th>Role</th>
+                                        <th>SkillName</th>
+                                        <th>ProficiencyLevel</th>
+                                        <th>Edit</th>
+                                        <th>Delete</th>
+                                    </tr>
+                                </thead>
+                </table>
+                <!-- Button trigger modal -->
+                <!-- Modal -->
+                <div id="EmployeeMadal" class="madal fade modal">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h1 class="text-primary modal-title">Edit Employee</h1>
+                                @*<button class="btn btn-sm btn-outline-danger" aria-label="Close"></button> *@
+                            </div>
+                            <div class="modal-body">
+                                <form>
+                                    <div class="form-row">
+                                        <label for="EId"></label>
+                                        <input type="hidden" class="form-control" id="EId">
+                                        <label for="ESId"></label>
+                                        <input type="hidden" class="form-control" id="ESId">
+                                        <div class="">
+                                            <label for="SKillName">Skill</label>
+                                            <input type="text" class="form-control" id="SkillName">
+                                        </div><br />
+                                        <div class="form-group col-md mt-2 mb-3">
+                                            <label for="proficiencyLevel">Proficiency Level&nbsp;&nbsp;&nbsp;&nbsp;:</label>
+                                            <div class="form-check-inline">
+                                                <input class="form-check-input" type="radio" name="Proficiency" id="proficiencyLevel" for="proficiencyLevel" value="Beginner">
+                                                <label class="form-check-label" for="beginnerRadio">
+                                                    Beginner
+                                                </label>
+                                            </div>
+                                            <div class="form-check-inline">
+                                                <input class="form-check-input" type="radio" name="Proficiency" id="proficiencyLevel" for="proficiencyLevel" value="Intermediate">
+                                                <label class="form-check-label" for="intermediateRadio">
+                                                    Intermediate
+                                                </label>
+                                            </div>
+                                            <div class="form-check-inline">
+                                                <input class="form-check-input" type="radio" name="Proficiency" id="proficiencyLevel" for="proficiencyLevel" value="Expert">
+                                                <label class="form-check-label" for="expertRadio">
+                                                    Expert
+                                                </label>
+                                            </div>
+                                            <button type="button" class="justify-content-center btn btn-primary mt-4" onclick="UpdateEmpBtn();" id="UpdateBtn">Update</button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+           </div>
+        </div>
+
+</section>
+@section scripts{
+ 
+    
+
+
+
+
+
+}
