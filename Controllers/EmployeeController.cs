@@ -22,6 +22,62 @@ namespace SkillInventory.Controllers
         {
             Configuration = configuration;
         }
+        [HttpGet]
+        public JsonResult GetEmployeeName()
+        {
+            try
+            {
+                var employeeId = HttpContext.Session.GetInt32("EmpID");
+                var role = HttpContext.Session.GetString("role");
+                var loginName = HttpContext.Session.GetString("EmpName");
+                SqlConnection conn = new SqlConnection(Configuration.GetConnectionString("DefaultConnection"));
+                List<Employee> lst = new List<Employee>();
+                SqlCommand cmd = conn.CreateCommand();
+                SqlDataAdapter da = new SqlDataAdapter(cmd);
+                DataTable dt = new DataTable();
+                var managerDept = Department.GetDepartmentsByManagerName(loginName);
+                var departmentList = new List<string>();
+                foreach (var department in managerDept)
+                {
+                    departmentList.Add($"'{department.ToString()}'");
+                }
+                var parameterList = string.Join(",", departmentList);
+
+                var roleCondition = string.Empty;
+                var userRole = DecryptPasswordBase64(role);
+               // SELECT* FROM Employees where Department IN('Salesforce','DotNet') AND Employees.IsDelete = 'N';
+
+                roleCondition = $"Department IN ({parameterList}) AND Employees.IsDelete='N';";
+
+                cmd.CommandType = CommandType.Text;
+                //cmd.CommandText = "GetEmployee";
+                cmd.CommandText = "SELECT DISTINCT * FROM Employees where " + roleCondition;
+                conn.Open();
+                da.Fill(dt);
+                conn.Close();
+
+                foreach (DataRow dr in dt.Rows)
+                {
+                    lst.Add(
+                        new Employee
+                        {
+                            EmployeeId = Convert.ToInt32(dr["EmployeeId"]),
+                            FirstName = Convert.ToString(dr["FirstName"]),
+                            LastName = Convert.ToString(dr["LastName"])
+                        });
+
+                }
+
+                var data = lst;
+                return new JsonResult(data);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+            return new JsonResult(null);
+
+        }
 
         [HttpGet]
         public JsonResult GetDepartmentName()
@@ -33,7 +89,7 @@ namespace SkillInventory.Controllers
                 SqlCommand cmd = conn.CreateCommand();
                 SqlDataAdapter da = new SqlDataAdapter(cmd);
                 DataTable dt = new DataTable();
-
+                var employeeId = HttpContext.Session.GetInt32("EmpID");
                 cmd.CommandType = CommandType.Text;
                 cmd.CommandText = "GetDepartment";
 
@@ -155,8 +211,9 @@ namespace SkillInventory.Controllers
                         SqlCommand cmd = new SqlCommand("AddSkill", conn);
                         cmd.CommandType = CommandType.StoredProcedure;
 
+                       
                         // Add parameters for EmployeeId and skill details
-                        cmd.Parameters.AddWithValue("@EmployeeId", employee.EmployeeId);
+                        cmd.Parameters.AddWithValue("@UserId", employee.EmployeeId);
                         cmd.Parameters.AddWithValue("@SkillName", skill.SkillName);
                         cmd.Parameters.AddWithValue("@ProficiencyLevel", skill.ProficiencyLevel);
 
@@ -173,7 +230,7 @@ namespace SkillInventory.Controllers
                 // Handle specific errors similar to the original code
                 // ...
 
-                status = "An error occurred while adding the employee and skills.";
+                status = "SkillExists";
                 Console.WriteLine(ex.Message);
 
                 return Json(status);

@@ -4,7 +4,7 @@
     // Get form elements
     var name = $("input[name='name']").val();
     var proficiency = $("input[name='proficiency']:checked").val();
-
+    
     // Validate proficiency selection
     if (!proficiency) {
         // Proficiency not selected, show error message
@@ -28,7 +28,7 @@ $("body").on("click", ".btn-delete", function () {
 function AddSkill() {
 
     const tableRows = document.getElementById("myForm").getElementsByTagName("tr");
-    let employeeId = sessionStorage.getItem('UserId');
+     let UserId = sessionStorage.getItem('UserId');
     //console.log(EmployeeId);
     // 2. Create an empty array to store objects:
     const skillData = [];
@@ -39,7 +39,6 @@ function AddSkill() {
 
         // 4. Create an object for each row:
         const skillObject = {
-            //EmployeeId,
             SkillName: row.cells[0].textContent, // Assuming "SkillName" is in the first cell (index 0)
             ProficiencyLevel: row.cells[1].textContent
             // Assuming "Proficiency" is in the second cell (index 1)
@@ -49,12 +48,11 @@ function AddSkill() {
 
         skillData.push(skillObject);
 
-
-
+    
     }
+    var EmpIDFromDropdown = $('#DropEmployee').val();
     var employee = {
-        EmployeeId: employeeId,
-        // Other employee details
+        EmployeeId: EmpIDFromDropdown ? EmpIDFromDropdown : UserId,
         SkillList: skillData
     };
     $.ajax({
@@ -64,8 +62,16 @@ function AddSkill() {
         contentType: 'application/x-www-form-urlencoded;charset=utf-8;',
         dataType: "json",
         success: function (response) {
+            if (response == "SkillExists") {
+                alert("Skill Already Exists");
+            }
+            else if (response == "Success") {
+                alert("Your skill Added successfully");
+            } else {
+                alert("Something doing Wrong")
+            }
          
-            alert("Your skill Added successfully");
+          
         
         }
     })

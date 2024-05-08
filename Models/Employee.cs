@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.AspNetCore.SignalR;
+using System.ComponentModel.DataAnnotations;
 using System.Diagnostics.Eventing.Reader;
 
 namespace SkillInventory.Models

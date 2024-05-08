@@ -1,16 +1,16 @@
 ﻿$.ajax({
     type: 'Get',
-    url: '/Employee/GetDepartmentName',
+    url: '/Employee/GetEmployeeName',
     contentType: 'application/x-www-form-urlencoded;charset=utf-8;',
     dataType: 'json',
 
     success: function (res) {
-        $('#DropDepartment').html('');
-        $('#DropDepartment').html('<Option value="">Select</Option>');
+        $('#DropEmployee').html('');
+        $('#DropEmployee').html('<Option value="">Employee</Option>');
         $.each(res, function (data, value) {
 
-            // $('#DropDepartment').append('<Option value=' + value.department + '>' + value.department + '</Option>');
-            $("#DropDepartment").append($("<option     />").val(this.departmentName).text(this.departmentName));
+            
+            $("#DropEmployee").append($("<option     />").val(this.employeeId).text(this.firstName + ' ' + this.lastName));
 
         });
         data = null;
@@ -18,4 +18,24 @@
 
 });
 
+
+$.ajax({
+    type: 'Get',
+    url: '/Employee/GetDepartmentName',
+    contentType: 'application/x-www-form-urlencoded;charset=utf-8;',
+    dataType: 'json',
+
+    success: function (res) {
+        $('#DropDepartment').html('');
+        $('#DropDepartment').html('<Option value="">Select Department</Option>');
+        $.each(res, function (data, value) {
+
+
+            $("#DropDepartment").append($("<option     />").val(this.departmentName).text(this.departmentName));
+
+        });
+        data = null;
+    }
+
+});
 
