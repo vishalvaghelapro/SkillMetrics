@@ -6,7 +6,7 @@
 
     success: function (res) {
         $('#DropEmployee').html('');
-        $('#DropEmployee').html('<Option value="">Employee</Option>');
+        $('#DropEmployee').html('<Option value="">Select Employee</Option>');
         $.each(res, function (data, value) {
 
             

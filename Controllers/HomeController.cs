@@ -25,24 +25,48 @@ namespace SkillInventory.Controllers
         }
         public IActionResult Login()
         {
+
             return View();
         }
 
         [Authorize]
-        public IActionResult Dashboard(Charts charts, Employee employee, EmployesSkills employesSkills)
+        public IActionResult Dashboard(Charts charts, Employee employee, EmployesSkills employesSkills, GetTotalCount getTotalCount)
         {
+
+            ViewData["role"] = GetRole();
             List<object> viewModel = new List<object>();
             var emp = EmployeeInfo(employee);
             var pieChartData = PieChart(charts);
+            var getTotalCountData = GetTotalCount();
+
+            ViewData["TotalSkill"] = getTotalCountData.TotalSkills;
+            ViewData["TotalDepartment"] = getTotalCountData.TotalDepartment;
+            ViewData["TotalEmployee"] = getTotalCountData.TotalEmployee;
+
             return View(pieChartData);
         }
 
-        public String[] GetEmployeeSkillCount(){
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        public string GetRole()
+        {
+            var loginName = HttpContext.Session.GetString("EmpName");
+            ViewData["username"] = loginName;
+            var role = HttpContext.Session.GetString("role");
+            HttpContext.Session.SetString("UserRole", role);
+            ViewData["role"] = role;
+            return role;
+        }
+
+        public String[] GetEmployeeSkillCount()
+        {
             var employeeId = HttpContext.Session.GetInt32("EmpID");
             var loginName = HttpContext.Session.GetString("EmpName");
             SqlConnection conn = new SqlConnection(Configuration.GetConnectionString("DefaultConnection"));
             string[] ProficiencyLevels = { "Beginner", "Intermediate", "Expert" };
-           // int employeeId = 2708; // Replace with the actual employee ID
+            // int employeeId = 2708; // Replace with the actual employee ID
 
             // Construct the dynamic WHERE clause using string interpolation
             string whereClause = $"IsDelete = 'N' AND EmployeeId = {employeeId} AND ProficiencyLevel IN (";
@@ -99,6 +123,42 @@ namespace SkillInventory.Controllers
             }
         }
 
+        public GetTotalCount GetTotalCount()
+        {
+            SqlConnection conn = new SqlConnection(Configuration.GetConnectionString("DefaultConnection"));
+            GetTotalCount getTotalCounts = new GetTotalCount();
+            //List<GetTotalCount> lst = new List<GetTotalCount>();
+            SqlCommand cmd = new SqlCommand("GetTotalCount", conn);
+            cmd.CommandType = CommandType.StoredProcedure;
+            SqlDataAdapter da = new SqlDataAdapter(cmd);
+            DataTable dt = new DataTable();
+
+            conn.Open();
+            da.Fill(dt);
+            conn.Close();
+
+            //foreach (DataRow dr in dt.Rows)
+            //{
+            //    lst.Add(
+            //        new GetTotalCount
+            //        {
+            //            TotalEmployee = Convert.ToInt32(dr["TotalEmployee"]),
+            //            TotalDepartment = Convert.ToInt32(dr["TotalDepartment"]),
+            //            TotalSkills = Convert.ToInt32(dr["TotalSkills"]),
+            //        });
+            //}
+
+
+            foreach (DataRow dr in dt.Rows)
+            {
+                getTotalCounts.TotalEmployee = Convert.ToInt32(dr["TotalEmployee"]);
+                getTotalCounts.TotalDepartment = Convert.ToInt32(dr["TotalDepartment"]);
+                getTotalCounts.TotalSkills = Convert.ToInt32(dr["TotalSkills"]);
+            }
+
+            return getTotalCounts;
+            //return new GetTotalCount { TotalEmployee= getTotalCount.TotalEmployee, TotalDepartment = getTotalCount.TotalDepartment, TotalSkills = getTotalCount.TotalSkills };
+        }
         public ChartsViewModel PieChart(Charts charts)
         {
             var employeeId = HttpContext.Session.GetInt32("EmpID");
@@ -117,7 +177,7 @@ namespace SkillInventory.Controllers
             if (userRole == "Manager")
             {
                 var managerDept = Department.GetDepartmentsByManagerName(loginName);
-                
+
                 foreach (var department in managerDept)
                 {
                     departmentList.Add($"{department.ToString()}");
@@ -126,7 +186,7 @@ namespace SkillInventory.Controllers
                 //roleCondition = $"Department IN ({parameterList}) AND EmployeesSkill.IsDelete='N';";
                 filterByDepartment = true;
             }
-        
+
             // Add parameter with the filtering decision
             cmd.Parameters.AddWithValue("@filterDepartment", filterByDepartment);
 
@@ -150,7 +210,7 @@ namespace SkillInventory.Controllers
                     });
             }
             Charts[] ChartsArray = lst.Take(10).ToArray();
-         
+
             string[] DepartmentNames = ChartsArray.Select(x => x.SkillName.Replace(" ", "")).ToArray();
             string[] Employees = ChartsArray.Select(x => x.Employee).ToArray();
             string[] Beginner = ChartsArray.Select(x => x.Beginner).ToArray();
@@ -168,11 +228,16 @@ namespace SkillInventory.Controllers
             string ExpertsStockcommaSeparatedValues = string.Join(", ", Experts);
             string[] stringInts = CategorycommaSeparatedValues.Split(',');
             string employeeSkillCount = string.Join(", ", GetEmployeeSkillCount());
-            ViewBag.username = loginName;
-            return new ChartsViewModel { Employee = EmployeesStockcommaSeparatedValues,
+
+            return new ChartsViewModel
+            {
+                Employee = EmployeesStockcommaSeparatedValues,
                 Beginner = BeginnersStockcommaSeparatedValues,
                 Intermediate = IntermediatesStockcommaSeparatedValues,
-                Expert = ExpertsStockcommaSeparatedValues, SkillNames = DepartmentNames , ProficiencyLevels= ProficiencyLevels, SkillCount= employeeSkillCount
+                Expert = ExpertsStockcommaSeparatedValues,
+                SkillNames = DepartmentNames,
+                ProficiencyLevels = ProficiencyLevels,
+                SkillCount = employeeSkillCount
             };
         }
 
@@ -190,6 +255,7 @@ namespace SkillInventory.Controllers
         [Authorize]
         public IActionResult ViewSkill()
         {
+            ViewData["role"] = GetRole();
             return View();
         }
 
@@ -200,10 +266,10 @@ namespace SkillInventory.Controllers
         [Authorize]
         public IActionResult AddSkill()
         {
+            ViewData["role"] = GetRole();
             return View();
         }
-     
-      
+
         [Authorize]
         public IActionResult Test()
         {

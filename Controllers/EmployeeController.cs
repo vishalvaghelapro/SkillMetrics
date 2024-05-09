@@ -196,7 +196,7 @@ namespace SkillInventory.Controllers
             {
                 using (SqlConnection conn = new SqlConnection(Configuration.GetConnectionString("DefaultConnection")))
                 {
-                    conn.Open();
+                  
 
                     // Check for null SkillList before iterating
                     if (employee.SkillList == null || !employee.SkillList.Any())
@@ -213,10 +213,10 @@ namespace SkillInventory.Controllers
 
                        
                         // Add parameters for EmployeeId and skill details
-                        cmd.Parameters.AddWithValue("@UserId", employee.EmployeeId);
+                        cmd.Parameters.AddWithValue("@EmployeeId", employee.EmployeeId);
                         cmd.Parameters.AddWithValue("@SkillName", skill.SkillName);
                         cmd.Parameters.AddWithValue("@ProficiencyLevel", skill.ProficiencyLevel);
-
+                        conn.Open();
                         cmd.ExecuteNonQuery();
                     }
 

@@ -48,6 +48,7 @@ namespace SkillInventory
             //Jwt configuration ends here    
             services.AddMvc()
             .AddSessionStateTempDataProvider();
+            services.AddDistributedMemoryCache();
             services.AddSession();
             services.AddHealthChecks();
             services.AddHttpClient();

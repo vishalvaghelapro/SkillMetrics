@@ -1,4 +1,9 @@
 ﻿<!DOCTYPE html>
+@{
+
+    var role = ViewData["role"] as string;
+    var username = ViewData["username"] as string;
+}
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -24,11 +29,10 @@
     <link href="~/css/site.css" asp-append-version="true" />
     <link href="~/css/login.css" asp-append-version="true" />
     <link href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-
-   
-
 </head>
 <body>
+    @if (role != null && (role.Contains("QWRtaW4=") || role.Contains("TWFuYWdlcg==") || role.Contains("RW1wbG95ZWU=")))
+    {
  
         <header id="header" class="header fixed-top d-flex align-items-center">
             <div class="d-flex align-items-center justify-content-between">
@@ -198,26 +202,26 @@
 
                         <a class="nav-link nav-profile d-flex align-items-center pe-0" href="#" data-bs-toggle="dropdown">
 
-                            <span class="d-none d-md-block dropdown-toggle ps-2">@ViewBag.username</span>
+                        <span class="d-none d-md-block dropdown-toggle ps-2">@Html.Encode(username)</span>
                         </a><!-- End Profile Iamge Icon -->
 
                         <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile">
                             <li class="dropdown-header">
-                                <h6>@ViewBag.username</h6>
+                            <h6>@Html.Encode(username)</h6>
                                 <span>Web Developer</span>
                             </li>
                             <li>
                                 <hr class="dropdown-divider">
                             </li>
 
-                            <li>
+                          @*<li>
                        
                                 <a class="nav-link text-dark" id="logout" asp-area="" asp-controller="Home" asp-action="Profile" onclick="#">
                                     <i class="bi bi-person"></i>
                                     <span>My Profile</span>
                                 </a>
-                            </li>
-                            <li>
+                            </li> *@
+                           @*  <li>
                                 <hr class="dropdown-divider">
                             </li>
 
@@ -239,10 +243,14 @@
                             </li>
                             <li>
                                 <hr class="dropdown-divider">
-                            </li>
+                            </li> *@
 
-                            <li>
-                                <a class="nav-link text-dark" id="logout" asp-area="" asp-controller="Home" asp-action="Logout" onclick="logout();">Logout</a>
+                            <li class="justify-content-center">
+                                <a class="nav-link text-dark" id="logout" asp-area="" asp-controller="Home" asp-action="Logout" onclick="logout();">
+                                    <i class="bi bi-box-arrow-left"></i>
+                                        <span>Logout</span>
+                                    
+                                </a>
                             </li>
 
                         </ul><!-- End Profile Dropdown Items -->
@@ -269,13 +277,15 @@
                         <span>View Skill</span>
                     </a>
                 </li><!-- End Register Page Nav -->
+            @if (role == "RW1wbG95ZWU=" || role == "TWFuYWdlcg==")
+                {
                 <li class="nav-item">
                     <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="AddSkill">
                         <i class="bi bi-grid"></i>
                         <span>AddSkill</span>
                     </a>
                 </li><!-- End Register Page Nav -->
-
+                }
             </ul>
         </aside>
 
@@ -283,18 +293,19 @@
     
     <!-- ======= Header ======= -->
    
-
+        }
 
         <main id="main">
             @RenderBody()
         </main>
-
+         @if (role == "QWRtaW4=" || role == "TWFuYWdlcg==" || role == "RW1wbG95ZWU=")
+        {
     <footer class="fixed-bottom border-top" style="background: #f6f9ff">
         <div class="justify-content-center">
             &copy; Copyright <strong><span>Desoto Technologies</span></strong>.
         </div>
     </footer>
-
+        }
 
 
 
