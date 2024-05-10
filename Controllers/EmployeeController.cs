@@ -187,6 +187,55 @@ namespace SkillInventory.Controllers
             var plainTextBytes = System.Text.Encoding.UTF8.GetBytes(text);
             return System.Convert.ToBase64String(plainTextBytes);
         }
+
+        //public JsonResult AddSkill(Employee employee)
+        //{
+        //    string status = "";
+
+        //    try
+        //    {
+        //        using (SqlConnection conn = new SqlConnection(Configuration.GetConnectionString("DefaultConnection")))
+        //        {
+
+
+        //            // Check for null SkillList before iterating
+        //            if (employee.SkillList == null || !employee.SkillList.Any())
+        //            {
+        //                status = "Error: No skills provided for the employee.";
+        //                return Json(status);
+        //            }
+
+        //            // Loop through each skill in the SkillList
+        //            foreach (var skill in employee.SkillList)
+        //            {
+        //                SqlCommand cmd = new SqlCommand("AddSkill", conn);
+        //                cmd.CommandType = CommandType.StoredProcedure;
+
+
+        //                // Add parameters for EmployeeId and skill details
+        //                cmd.Parameters.AddWithValue("@EmployeeId", employee.EmployeeId);
+        //                cmd.Parameters.AddWithValue("@SkillName", skill.SkillName);
+        //                cmd.Parameters.AddWithValue("@ProficiencyLevel", skill.ProficiencyLevel);
+        //                conn.Open();
+        //                cmd.ExecuteNonQuery();
+        //            }
+
+        //            status = "Success";
+        //        }
+
+        //        return Json(status);
+        //    }
+        //    catch (SqlException ex)
+        //    {
+        //        // Handle specific errors similar to the original code
+        //        // ...
+
+        //        status = "SkillExists";
+        //        Console.WriteLine(ex.Message);
+
+        //        return Json(status);
+        //    }
+        //}
         [HttpPost]
         public JsonResult AddSkill(Employee employee)
         {
@@ -194,36 +243,32 @@ namespace SkillInventory.Controllers
 
             try
             {
-                using (SqlConnection conn = new SqlConnection(Configuration.GetConnectionString("DefaultConnection")))
+                SqlConnection conn = new SqlConnection(Configuration.GetConnectionString("DefaultConnection"));
+                conn.Open(); // Open the connection explicitly
+
+                // Check for null SkillList before iterating
+                if (employee.SkillList == null || !employee.SkillList.Any())
                 {
-                  
-
-                    // Check for null SkillList before iterating
-                    if (employee.SkillList == null || !employee.SkillList.Any())
-                    {
-                        status = "Error: No skills provided for the employee.";
-                        return Json(status);
-                    }
-
-                    // Loop through each skill in the SkillList
-                    foreach (var skill in employee.SkillList)
-                    {
-                        SqlCommand cmd = new SqlCommand("AddSkill", conn);
-                        cmd.CommandType = CommandType.StoredProcedure;
-
-                       
-                        // Add parameters for EmployeeId and skill details
-                        cmd.Parameters.AddWithValue("@EmployeeId", employee.EmployeeId);
-                        cmd.Parameters.AddWithValue("@SkillName", skill.SkillName);
-                        cmd.Parameters.AddWithValue("@ProficiencyLevel", skill.ProficiencyLevel);
-                        conn.Open();
-                        cmd.ExecuteNonQuery();
-                    }
-
-                    status = "Success";
+                    status = "Error: No skills provided for the employee.";
+                    return Json(status);
                 }
 
-                return Json(status);
+                // Loop through each skill in the SkillList
+                foreach (var skill in employee.SkillList)
+                {
+                    SqlCommand cmd = new SqlCommand("AddSkill", conn);
+                    cmd.CommandType = CommandType.StoredProcedure;
+
+                    // Add parameters for EmployeeId and skill details
+                    cmd.Parameters.AddWithValue("@EmployeeId", employee.EmployeeId);
+                    cmd.Parameters.AddWithValue("@SkillName", skill.SkillName);
+                    cmd.Parameters.AddWithValue("@ProficiencyLevel", skill.ProficiencyLevel);
+                    cmd.ExecuteNonQuery();
+                }
+
+                status = "Success";
+
+                conn.Close(); // Close the connection explicitly
             }
             catch (SqlException ex)
             {
@@ -235,6 +280,8 @@ namespace SkillInventory.Controllers
 
                 return Json(status);
             }
+
+            return Json(status);
         }
         [HttpGet]
         public JsonResult GetEmpData()

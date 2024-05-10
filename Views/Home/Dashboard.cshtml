@@ -2,10 +2,10 @@
 
 
 @{
+    var Role = ViewData["Role"] as string;
     ViewData["Title"] = "Employee";
     var role = ViewData["role"] as string;
     var username = ViewData["username"] as string;
-
     var TotalDepartment = ViewData["TotalDepartment"].ToString();
     var TotalEmployee = ViewData["TotalEmployee"].ToString();
     var TotalSkill = ViewData["TotalSkill"].ToString();
@@ -17,7 +17,6 @@
     <div class="pagetitle">
 
         <h1>Dashboard</h1>
-
         <nav>
             <ol class="breadcrumb">
                 <li class="breadcrumb-item"><a href="index.html">Home</a></li>
@@ -27,18 +26,14 @@
     </div><!-- End Page Title -->
     <section class="section dashboard">
         <div class="row">
-
             <!-- Left side columns -->
             <div class="col">
                 <div class="row">
-
                     <!-- Sales Card -->
-
                     <div class="col-xxl-4 col-md-6">
                         <div class="card info-card sales-card">
                             <div class="card-body">
                                 <h5 class="card-title">Skills <span></span></h5>
-
                                 <div class="d-flex align-items-center">
                                     <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
                                         <i class="bi bi-stack"></i>

@@ -34,6 +34,7 @@ namespace SkillInventory.Controllers
         {
 
             ViewData["role"] = GetRole();
+            ViewData["Role"] = GetRole();
             List<object> viewModel = new List<object>();
             var emp = EmployeeInfo(employee);
             var pieChartData = PieChart(charts);
@@ -57,6 +58,9 @@ namespace SkillInventory.Controllers
             var role = HttpContext.Session.GetString("role");
             HttpContext.Session.SetString("UserRole", role);
             ViewData["role"] = role;
+            var Role = DecryptPasswordBase64(role);
+            ViewBag.Role = Role;
+            
             return role;
         }
 
@@ -286,5 +290,11 @@ namespace SkillInventory.Controllers
             var base64EncodedBytes = System.Convert.FromBase64String(base64EncodedData);
             return System.Text.Encoding.UTF8.GetString(base64EncodedBytes);
         }
+        public static string EncryptPasswordBase64(string text)
+        {
+            var plainTextBytes = System.Text.Encoding.UTF8.GetBytes(text);
+            return System.Convert.ToBase64String(plainTextBytes);
+        }
+
     }
 }

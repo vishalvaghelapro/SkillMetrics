@@ -62,17 +62,25 @@ function AddSkill() {
         contentType: 'application/x-www-form-urlencoded;charset=utf-8;',
         dataType: "json",
         success: function (response) {
-            if (response == "SkillExists") {
+            if (response === "SkillExists") {
                 alert("Skill Already Exists");
-            }
-            else if (response == "Success") {
+            } else if (response === "Success") {
                 alert("Your skill Added successfully");
+                // Optionally, clear the form or update the UI
             } else {
-                alert("Something doing Wrong")
+                try {
+                    // Handle specific errors based on response (if applicable)
+                    console.error("Error adding skill:", response);
+                   /* alert("An error occurred. Please try again.");*/
+                } catch (error) {
+                    console.error("Unexpected error:", error);
+                    alert("Something went wrong. Please contact support.");
+                }
             }
-         
-          
-        
+        },
+        error: function (jqXHR, textStatus, errorThrown) {
+            console.error("AJAX error:", textStatus, errorThrown);
+            alert("An error occurred during the request. Please try again.");
         }
     })
 

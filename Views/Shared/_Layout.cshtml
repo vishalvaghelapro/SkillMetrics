@@ -1,6 +1,6 @@
 ﻿<!DOCTYPE html>
 @{
-
+    var UserRole = ViewData["Role"] as string;
     var role = ViewData["role"] as string;
     var username = ViewData["username"] as string;
 }
@@ -208,7 +208,7 @@
                         <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile">
                             <li class="dropdown-header">
                             <h6>@Html.Encode(username)</h6>
-                                <span>Web Developer</span>
+                                <span></span>
                             </li>
                             <li>
                                 <hr class="dropdown-divider">
@@ -246,7 +246,7 @@
                             </li> *@
 
                             <li class="justify-content-center">
-                                <a class="nav-link text-dark" id="logout" asp-area="" asp-controller="Home" asp-action="Logout" onclick="logout();">
+                                <a class="nav-link text-dark text-center pt-2 pb-2" id="logout" asp-area="" asp-controller="Home" asp-action="Logout" onclick="logout();">
                                     <i class="bi bi-box-arrow-left"></i>
                                         <span>Logout</span>
                                     
