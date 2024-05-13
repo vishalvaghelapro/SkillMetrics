@@ -23,6 +23,7 @@ namespace SkillInventory.Controllers
             _logger = logger;
             Configuration = configuration;
         }
+        
         public IActionResult Login()
         {
 

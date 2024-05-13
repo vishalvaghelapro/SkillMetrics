@@ -1,4 +1,5 @@
-﻿function AddEmpData() {
+﻿
+function AddEmpData() {
     var Email = $('#Username').val() + $("#Domain").text();
     var objData = {
         FirstName: $('#FName').val(),
