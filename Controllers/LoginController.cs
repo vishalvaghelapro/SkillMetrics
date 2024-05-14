@@ -29,77 +29,83 @@ namespace SkillInventory.Controllers
         [HttpGet]
         public IActionResult Login(Employee employee)
         {
-            SqlConnection conn = new SqlConnection(Configuration.GetConnectionString("DefaultConnection"));
-            LoginData loginData = new LoginData();
-            SqlCommand cmd = conn.CreateCommand();
-            SqlDataAdapter da = new SqlDataAdapter(cmd);
-            DataTable dt = new DataTable();
-            cmd.CommandText = "LoginSP";
-            cmd.CommandType = CommandType.StoredProcedure;
-
-
-            cmd.Parameters.AddWithValue("@Email", employee.Email);
-
-            cmd.Parameters.AddWithValue("@Password", EncryptPasswordBase64(employee.Password) == null ? "" : EncryptPasswordBase64(employee.Password));
-
-            SqlParameter Status = new SqlParameter();
-            Status.ParameterName = "@Isvalid";
-            Status.SqlDbType = SqlDbType.Bit;
-            Status.Direction = ParameterDirection.Output;
-            cmd.Parameters.Add(Status);
-
-
-            SqlParameter ObjRoll = new SqlParameter();
-            ObjRoll.ParameterName = "@Role";
-            ObjRoll.SqlDbType = SqlDbType.NVarChar;
-            ObjRoll.Size = 100;
-            ObjRoll.Direction = ParameterDirection.Output;
-            cmd.Parameters.Add(ObjRoll);
-
-            SqlParameter ObjEmpName = new SqlParameter();
-            ObjEmpName.ParameterName = "@EmployeeName";
-            ObjEmpName.SqlDbType = SqlDbType.NVarChar;
-            ObjEmpName.Size = 100;
-            ObjEmpName.Direction = ParameterDirection.Output;
-            cmd.Parameters.Add(ObjEmpName);
-
-            SqlParameter UserId = new SqlParameter();
-            UserId.ParameterName = "@EmployeeId";
-            UserId.SqlDbType = SqlDbType.Int;
-            UserId.Direction = ParameterDirection.Output;
-            cmd.Parameters.Add(UserId);
-            conn.Open();
-            cmd.ExecuteNonQuery();
-
-            conn.Close();
-
-            var role = Convert.ToString(ObjRoll.Value);
-            //var employeeId = Convert.To(UserId.Value);
-            if (Convert.ToString(Status.Value) == Convert.ToString(true))
+            if (string.IsNullOrEmpty(employee.Email))
             {
-                token = GenerateJSONWebToken(employee);
-                loginData.JwtString = Convert.ToString(token);
-                loginData.UserRoll = EncryptPasswordBase64(role);
-                loginData.EmployeeId = Convert.ToInt32(UserId.Value);
-                loginData.EmpName = Convert.ToString(ObjEmpName.Value);
-                HttpClient client = new HttpClient();
-                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-                HttpContext.Session.SetString("JWToken", token);
-                HttpContext.Session.SetInt32("EmpID", Convert.ToInt32(UserId.Value));
-                HttpContext.Session.SetString("role", Convert.ToString(loginData.UserRoll));
-                HttpContext.Session.SetString("EmpName", Convert.ToString(loginData.EmpName));
-                //  return RedirectToAction("HomeController/Home");
-                return new JsonResult(loginData);
-
-            }
-            else
-            {
-                return Content("User is Not Exiest");
+                return BadRequest("Please enter your email address.");
             }
 
-            return new JsonResult("");
+            if (string.IsNullOrEmpty(employee.Password))
+            {
+                return BadRequest("Please enter your password.");
+            }
 
+            using (SqlConnection conn = new SqlConnection(Configuration.GetConnectionString("DefaultConnection")))
+            {
+                conn.Open();
 
+                SqlCommand cmd = conn.CreateCommand();
+                cmd.CommandText = "LoginSP";
+                cmd.CommandType = CommandType.StoredProcedure;
+
+                cmd.Parameters.AddWithValue("@Email", employee.Email);
+                cmd.Parameters.AddWithValue("@Password", EncryptPasswordBase64(employee.Password));
+
+                SqlParameter isValid = new SqlParameter();
+                isValid.ParameterName = "@Isvalid";
+                isValid.SqlDbType = SqlDbType.Bit;
+                isValid.Direction = ParameterDirection.Output;
+                cmd.Parameters.Add(isValid);
+
+                SqlParameter role = new SqlParameter();
+                role.ParameterName = "@Role";
+                role.SqlDbType = SqlDbType.NVarChar;
+                role.Size = 100;
+                role.Direction = ParameterDirection.Output;
+                cmd.Parameters.Add(role);
+
+                SqlParameter employeeName = new SqlParameter();
+                employeeName.ParameterName = "@EmployeeName";
+                employeeName.SqlDbType = SqlDbType.NVarChar;
+                employeeName.Size = 100;
+                employeeName.Direction = ParameterDirection.Output;
+                cmd.Parameters.Add(employeeName);
+
+                SqlParameter employeeId = new SqlParameter();
+                employeeId.ParameterName = "@EmployeeId";
+                employeeId.SqlDbType = SqlDbType.Int;
+                employeeId.Direction = ParameterDirection.Output;
+                cmd.Parameters.Add(employeeId);
+
+                cmd.ExecuteNonQuery();
+
+                bool isAuthenticated = Convert.ToBoolean(isValid.Value);
+
+                if (isAuthenticated)
+                {
+                    string token = GenerateJSONWebToken(employee);
+                    LoginData loginData = new LoginData
+                    {
+                        JwtString = token,
+                        UserRoll = EncryptPasswordBase64(Convert.ToString(role.Value)),
+                        EmployeeId = Convert.ToInt32(employeeId.Value),
+                        EmpName = Convert.ToString(employeeName.Value)
+                    };
+
+                    HttpClient client = new HttpClient();
+                    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+                    HttpContext.Session.SetString("JWToken", token);
+                    HttpContext.Session.SetInt32("EmpID", Convert.ToInt32(employeeId.Value));
+                    HttpContext.Session.SetString("role", Convert.ToString(loginData.UserRoll));
+                    HttpContext.Session.SetString("EmpName", Convert.ToString(loginData.EmpName));
+
+                    return new JsonResult(loginData);
+                }
+                else
+                {
+                    return BadRequest("Invalid email or password."); // More specific if possible
+                }
+            }
         }
         private string GenerateJSONWebToken(Employee employee)
         {
@@ -119,12 +125,21 @@ namespace SkillInventory.Controllers
 
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
+        //public static string EncryptPasswordBase64(string text)
+        //{
+        //    var plainTextBytes = System.Text.Encoding.UTF8.GetBytes(text);
+        //    return System.Convert.ToBase64String(plainTextBytes);
+        //}
         public static string EncryptPasswordBase64(string text)
         {
+            if (text == null)
+            {
+                throw new ArgumentNullException(nameof(text)); // Or handle null in another way
+            }
+
             var plainTextBytes = System.Text.Encoding.UTF8.GetBytes(text);
             return System.Convert.ToBase64String(plainTextBytes);
         }
-
         public static string DecryptPasswordBase64(string base64EncodedData)
         {
             var base64EncodedBytes = System.Convert.FromBase64String(base64EncodedData);

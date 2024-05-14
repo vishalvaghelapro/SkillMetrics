@@ -98,8 +98,8 @@ namespace SkillInventory
                 name: "Profile",
                 pattern: "{controller=Home}/{action=Profile}/{id?}");
                 endpoints.MapControllerRoute(
-                name: "AddSkill",
-                pattern: "{controller=Home}/{action=AddSkill}/{id?}");
+                name: "ViewSkill",
+                pattern: "{controller=Home}/{action=ViewSkill}/{id?}");
                 endpoints.MapControllerRoute(
                 name: "Registration",
                 pattern: "{controller=Home}/{action=Registration}/{id?}");

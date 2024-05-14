@@ -1,0 +1,36 @@
+﻿
+#loading {
+    /* Position the loading element */
+    position: fixed; /* Or relative based on your layout */
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%); /* Center the element */
+    width: 50px; /* Adjust size as needed */
+    height: 50px; /* Adjust size as needed */
+    display: flex; /* Center the spinner content horizontally and vertically */
+    justify-content: center;
+    /*align-items: center;*/
+   /* background: rgba(255,255,255,0.8);*/
+   /* z-index: 1000;*/
+    /*background-image: url("~/assets/img/loading.gif");
+    z-index: 1000;
+    background-repeat: no-repeat;*/ /* Prevent tiling */
+    /*background-position: center;*/ /* Center the image within the element */
+}
+
+#loadingcontent {
+    display: block; /* Change to block for full viewport coverage */
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+}
+#loadingspinner {
+    display: table-cell;
+    vertical-align: middle;
+    width: 100%;
+    text-align: center;
+    font-size: larger;
+    padding-top: 80px;
+}

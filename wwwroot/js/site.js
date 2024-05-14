@@ -77,11 +77,20 @@ function UpdateEmpBtn() {
 function Login() {
     var Email = $('#Username').val() + $('#Domain').text();
     var password = $("#Password").val();
-
+    if (Username === '') {
+        
+        return;
+    }
+    else if (password === '') {
+        
+        return;
+    } 
     var objData = {
         Email: Email,
         password: password
     };
+   
+
 
     console.log(objData);
     $.ajax({
@@ -111,6 +120,7 @@ function Login() {
 
         },
         error: function () {
+            
             alert("Invalid username or password!");
         }
     });
