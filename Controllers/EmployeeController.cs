@@ -307,7 +307,7 @@ namespace SkillInventory.Controllers
 
                 }
                 var data = empSkillList;
-               Thread.Sleep(2000);
+               //Thread.Sleep(2000);
                 return new JsonResult(data);
                 //return Json(dt);
             }
